@@ -1,14 +1,54 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css?family=Mada|Varela+Round');
+
+* {
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+h1, h2, h3, h4, h5 {
+  font-family: 'Varela Round', sans-serif;
+}
+
+input, button, form, p, h1{
+  margin: 0;
+}
+
+body {
+  font-family: 'Mada', sans-serif;
+  background-color: #FCF5EF;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#root{
+  width: 50%;
+  margin: 100px auto;
+  background-color: #fefefe;
+  padding: 50px;
+  border-radius: 5px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  margin-top: 50px;
+}
+
+footer span {
+  color: pink;
+}
+
+footer p a {
+  text-decoration: none;
+  color: #262626;
+}
+
+footer p a:hover {
+  color: pink;
+}
+
+@media (max-width: 930px) {
+  #root{
+    width: 80%;}
 }

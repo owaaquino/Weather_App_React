@@ -1,68 +1,388 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Weather Application with API
 
-## Available Scripts
+Display the current weather of the city and country user entered.
 
-In the project directory, you can run:
+**Goal:**
 
-### `npm start`
+- Learn how to use API using fetch.
+- Refresh our the props and state knowledge.
+- Introduction to React Style Component
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Features:**
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- Display the current weather of the city and country user entered.
 
-### `npm test`
+**Techs:**
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- React.js
+- React Router
+- CSS
+- HTML
+- OWM Weather API
 
-### `npm run build`
+**Live links:**
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Hosted with Netlify -
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+# Notes
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Prerequisites:
 
-### `npm run eject`
+- Must install Nodejs on your unit
+- Must install NPM on your unit
+- Install create-react-app installed to your node module ( check out [https://github.com/facebook/create-react-app](https://github.com/facebook/create-react-app) for how to install the framework)
+- Have a basic understanding of Javascript (ES6)
+- Have a basic knowledge about React.js framework
+- Styled Component is included in the dependencies of your npm
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+        npm install styled-component --save
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 1. Initialize and create basic Components
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## App.js
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+As our main js file, lets make sure we import the React and related Components.
+```javascript
+    import React, { Component } from "react";
+    import Title from "./components/Title";
+    import Form from "./components/Form";
+    import Weather from "./components/Weather";
 
-## Learn More
+    class App extends Component {
+    }
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    export default App;
+```
+## Title.js
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Is just a simple stateless components that display a short information of our app
+```javascript
+    import React from "react";
+    const Title = props => {
+      return (
+        <div>
+          <h1>Weather Application</h1>
+          <p>
+            A simple weather application built with ReactJs and OWM Weather API.
+          </p>
+        </div>
+      );
+    };
 
-### Code Splitting
+    export default Title;
+```
+## Form.js
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+This component will handle our queries when we entered a city and a country to know the weather.
+```javascript
+    import React from "react";
 
-### Analyzing the Bundle Size
+    const Form = props => {
+      return (
+        <form onSubmit={/* handler funciton */}>
+          <input type="text" placeholder="City..." name="city" required />
+          <input type="text" placeholder="Country..." name="country" required />
+          <button>Get Weather</button>
+        </form>
+      );
+    };
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+    export default Form;
+```
+## Weather.js
 
-### Making a Progressive Web App
+Will display our result in this component.
+```javascript
+    import React from "react";
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+    const Weather = props => {
+      return (
+        <div="weather_div">
+    		/* data we wanted to display goes here */
+        </div>
+      );
+    };
 
-### Advanced Configuration
+    export default Weather;
+```
+## 2. Create a callback function for our API
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+Using the javascript fetch() api we can use this to get data from our API.
 
-### Deployment
+## App.js
+```javascript
+    class App extends Component {
+    	//lets make a state where we can input our store our datas.
+    	state = {
+    		temperature: undefined,
+        city: undefined,
+        country: undefined,
+        condition: undefined,
+        icon: undefined,
+        error: undefined
+    	}
+    	// create our callback function to get the API data and transfer them to the state.
+    	getWeather = async e => {
+        e.preventDefault();
+        const Api_Key = "a4451e5b412a4bb2370d554eb617eeb4";
+        const city = e.target.elements.city.value;
+        const country = e.target.elements.country.value;
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+        await fetch(
+          `http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${Api_Key}`
+        )
+          .then(response => response.json())
+          .then(responseData => {
+            this.setState({
+              temperature: responseData.main.temp,
+              city: responseData.name,
+              country: responseData.sys.country,
+              condition: responseData.weather[0].description,
+              icon: responseData.weather[0].icon
+            });
+            console.log(responseData);
+          })
+          .catch(error => {
+            console.log("Error fetching and parsing data.", error);
+            // this.setState({
+            //   error: "Error fetching and Parsing data."
+            // });
+          });
+      };
 
-### `npm run build` fails to minify
+    	render() {
+        return (
+          <div>
+            <Title />
+            <Form loadWeather={this.getWeather} />
+            <Weather
+              temp={this.state.temperature}
+              city={this.state.city}
+              country={this.state.country}
+              condition={this.state.condition}
+              icon={this.state.icon}
+              error={this.state.error}
+            />
+          </div>
+        );
+      }
+    }
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+    export default App;
+```
+- getWeather function make sure to get the data from the API based on the city and country we entered into the form
+- we make a state object to store our datas from the API after fetching.
+- then use the data as props for our lower component to use.
+
+## 3. Add onSubmit event on to our form
+
+## Form.js
+```javascript
+    const Form = props => {
+      return (
+        <div onSubmit={props.loadWeather}>
+          <input type="text" placeholder="City..." name="city" required />
+          <input type="text" placeholder="Country..." name="country" required />
+          <button>Get Weather</button>
+        </div>
+      );
+    };
+```
+- onSubmit of our form the value of the input boxes will be put into our getWeather function and adding it to the API query.
+
+## 4. Display the weather information
+
+Now we display the weather information from our App.js to the Weather.js using props.
+
+## Weather.js
+```javascript
+    const Weather = props => {
+      return (
+        <div id="weather_div">
+          <div>
+            {props.icon && (
+              <img
+                src={`http://openweathermap.org/img/w/${props.icon}.png`}
+                alt={props.condition}
+              />
+            )}
+          </div>
+          <div>
+            {props.city && props.country && (
+              <p>
+                <span>Location:</span> {props.city}, {props.country}
+              </p>
+            )}
+            {props.temp && (
+              <p>
+                <span>Temperature:</span> {props.temp}
+              </p>
+            )}
+            {props.condition && (
+              <p>
+                <span>Condition:</span> {props.condition}
+              </p>
+            )}
+            {<p>{props.error}</p>}
+          </div>
+        </div>
+      );
+    };
+```
+- notice that every details are displayed into a conditional operator because we wanted them to be displayed only if the props are present.
+
+    e.x
+```javascript
+        {props.city && props.country && (
+                  <p>
+                    <span>Location:</span> {props.city}, {props.country}
+                  </p>
+                )}
+```
+    - this means display the details only if the three condition are met.
+
+---
+
+# Bonus
+
+This section will introduce to a React component called "Styled Component". Basically this are for styling purposes, the great thing about this is that we can make our styles specific to a component. Also known as CSS-in-JS.
+
+## Title.js
+```javascript
+    import React from "react";
+    import styled from "styled-components";
+
+    const Heading = styled.div`
+      text-align: left;
+      & > h1 {
+        color: #ff7235;
+      }
+      & > p {
+        color: #45503b;
+      }
+    `;
+
+    const Title = props => {
+      return (
+        <Heading>
+          <h1>Weather Application</h1>
+          <p>
+            A simple weather application built with ReactJs and OWM Weather API.
+          </p>
+        </Heading>
+      );
+    };
+
+    export default Title;
+```
+- import the library to the component you wished to use the 'styled-component' into.
+- create a variable/component that we wanted to apply style into (for above example we created the Heading component).
+- Notice the 'styled.div' this means we wanted to style this and make this as a div element.
+- In this component (Heading) we can apply the CSS styles directly to it. Or in the example above we also add some style to its children element like h1 and paragraph.
+- Then make sure to use the component into the Title render method. So that the styles we made takes effect on the page.
+
+## Form.js
+```javascript
+    import React from "react";
+    import styled from "styled-components";
+
+    const InputForm = styled.form`
+      margin-top: 20px;
+      & > input {
+        padding: 10px;
+        @media (max-width: 930px) {
+          display: block;
+          width: 100%;
+          margin: 5px;
+        }
+      }
+      & > input:first-child {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        @media (max-width: 930px) {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
+      & > button {
+        color: #fefefe;
+        background-color: #6db5ca;
+        border: none;
+        padding: 12px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        @media (max-width: 930px) {
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          display: block;
+          margin: 0 auto;
+        }
+      }
+    `;
+
+    const Form = props => {
+      return (
+        <InputForm onSubmit={props.loadWeather}>
+          <input type="text" placeholder="City..." name="city" required />
+          <input type="text" placeholder="Country..." name="country" required />
+          <button>Get Weather</button>
+        </InputForm>
+      );
+    };
+
+    export default Form;
+```
+- we can specify media queries directly into the element, making sure the general markup will not be affected.
+
+## Weather.js
+```javascript
+    import React from "react";
+    import styled from "styled-components";
+
+    const WeatherData = styled.div`
+      display: flex;
+      margin-top: 20px;
+      justify-content: space-around;
+      @media (max-width: 930px) {
+        display: block;
+      }
+      & > div > p > span {
+        font-weight: 600;
+        color: #ff7235;
+      }
+    `;
+
+    const Weather = props => {
+      return (
+        <WeatherData id="weather_div">
+          <div>
+            {props.icon && (
+              <img
+                src={`http://openweathermap.org/img/w/${props.icon}.png`}
+                alt={props.condition}
+              />
+            )}
+          </div>
+          <div>
+            {props.city && props.country && (
+              <p>
+                <span>Location:</span> {props.city}, {props.country}
+              </p>
+            )}
+            {props.temp && (
+              <p>
+                <span>Temperature:</span> {props.temp}
+              </p>
+            )}
+            {props.condition && (
+              <p>
+                <span>Condition:</span> {props.condition}
+              </p>
+            )}
+            {<p>{props.error}</p>}
+          </div>
+        </WeatherData>
+      );
+    };
+    export default Weather;
+    ```
