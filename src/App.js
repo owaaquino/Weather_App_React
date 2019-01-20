@@ -22,7 +22,7 @@ class App extends Component {
     const country = e.target.elements.country.value;
 
     await fetch(
-      `http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${Api_Key}`
+      `https://weatherr-application-react.netlify.com/http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${Api_Key}`
     )
       .then(response => response.json())
       .then(responseData => {
