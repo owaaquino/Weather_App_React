@@ -22,7 +22,7 @@ Display the current weather of the city and country user entered.
 
 **Live links:**
 
-- Hosted with Netlify -
+- Hosted with Netlify - [https://weatherr-application-react.netlify.com/](https://weatherr-application-react.netlify.com/)
 
 # Notes
 
