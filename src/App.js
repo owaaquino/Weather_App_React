@@ -11,7 +11,7 @@ class App extends Component {
     country: undefined,
     condition: undefined,
     icon: undefined,
-    error: undefined
+    error: false
   };
 
   getWeather = async e => {
@@ -22,8 +22,17 @@ class App extends Component {
     const country = e.target.elements.country.value;
 
     await fetch(
-      `https://weatherr-application-react.netlify.com/http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${Api_Key}`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${Api_Key}`
     )
+      .then(res => {
+        if (res.ok) {
+          return res;
+        } else {
+          this.setState({
+            error: "👎 No location found. Please check your input."
+          });
+        }
+      })
       .then(response => response.json())
       .then(responseData => {
         this.setState({
@@ -31,9 +40,10 @@ class App extends Component {
           city: responseData.name,
           country: responseData.sys.country,
           condition: responseData.weather[0].description,
-          icon: responseData.weather[0].icon
+          icon: responseData.weather[0].icon,
+          error: undefined
         });
-        console.log(responseData);
+        console.log("this is " + responseData);
       })
       .catch(error => {
         console.log("Error fetching and parsing data.", error);

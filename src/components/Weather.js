@@ -22,7 +22,7 @@ const Weather = props => {
       <div>
         {props.icon && (
           <img
-            src={`http://openweathermap.org/img/w/${props.icon}.png`}
+            src={`https://openweathermap.org/img/w/${props.icon}.png`}
             alt={props.condition}
           />
         )}
@@ -43,7 +43,7 @@ const Weather = props => {
             <span>Condition:</span> {props.condition}
           </p>
         )}
-        {<p>{props.error}</p>}
+        {props.error && <p>{props.error}</p>}
       </div>
     </WeatherData>
   );
